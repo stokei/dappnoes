@@ -1,11 +1,10 @@
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { injected } from 'wagmi/connectors';
 
-export const useWallet = () => {
+export const useUser = () => {
   const { connect } = useConnect()
   const { disconnect } = useDisconnect()
-  const { address: accountAddress, isConnected: connected, isConnecting } = useAccount()
-  const isConnected = !isConnecting && !!connected && !!accountAddress;
+  const { address: accountAddress, isConnected, isConnecting } = useAccount()
 
   const onConnect = async () => {
     try {

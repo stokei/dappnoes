@@ -1,6 +1,7 @@
 "use client";
 
-import { GlobalLoading } from '@/components/global-loading';
+import { PageLayout } from '@/components/layouts';
+import { NavBar } from '@/components/navbar';
 import { useNavigate } from '@/hooks/use-navigate';
 import { useUser } from '@/hooks/use-user';
 import { routes } from '@/routes';
@@ -15,12 +16,15 @@ export default function Page() {
       if (isConnected) {
         return push(routes.dashboard.home);
       }
-      return push(routes.auth.login);
     }
     checkAuth();
   }, [isConnected, push]);
 
   return (
-    <GlobalLoading />
+    <PageLayout.Root>
+      <PageLayout.Content>
+        <NavBar />
+      </PageLayout.Content>
+    </PageLayout.Root>
   );
 }
