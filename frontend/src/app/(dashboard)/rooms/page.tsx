@@ -1,7 +1,7 @@
-import { NavBar } from '@/components/navbar';
+import { RoomsList } from './_components/rooms-list';
 
 export default function Page() {
   return (
-    <NavBar />
+    <RoomsList />
   );
 }

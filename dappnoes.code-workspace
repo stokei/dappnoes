@@ -31,6 +31,17 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "eslint.format.enable": true,
     "eslint.enable": true,
+    "eslint.workingDirectories": [
+      {
+        "directory": "backend"
+      },
+      {
+        "directory": "frontend"
+      }
+    ],
+    "[solidity]": {
+      "editor.defaultFormatter": "NomicFoundation.hardhat-solidity"
+    },
     "[prisma]": {
       "editor.defaultFormatter": "Prisma.prisma"
     },
@@ -62,9 +73,6 @@
 			"**/.next": true,
 			"**/.turbo": true,
 			"**/build": true
-    },
-    "[typescript]": {
-      "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     }
   }
 }

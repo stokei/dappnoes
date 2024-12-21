@@ -1,3 +1,3 @@
-import { RoomsModule } from "./rooms/rooms.module";
+import { RoomsModule } from './rooms/rooms.module';
 
-export const Modules = [RoomsModule]
+export const Modules = [RoomsModule];

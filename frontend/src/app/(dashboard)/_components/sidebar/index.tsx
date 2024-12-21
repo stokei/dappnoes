@@ -1,11 +1,12 @@
-"use client";
+'use client';
 
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
-import Text from "@/components/ui/text";
-import { useTranslations } from "@/hooks/use-translations";
-import { routes } from "@/routes";
-import { Home as HomeIcon } from 'lucide-react';
 import Link from 'next/link';
+import { Home as HomeIcon } from 'lucide-react';
+
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import Text from '@/components/ui/text';
+import { useTranslations } from '@/hooks/use-translations';
+import { routes } from '@/routes';
 
 export const Sidebar = () => {
   const translate = useTranslations();
@@ -21,4 +22,4 @@ export const Sidebar = () => {
       </SidebarMenuItem>
     </SidebarMenu>
   );
-}
+};

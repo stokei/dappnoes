@@ -6,4 +6,4 @@ export const GlobalLoading = () => {
       <Loader className='animate-spin' />
     </div>
   );
-}
+};

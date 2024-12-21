@@ -1,5 +1,6 @@
-import { Container } from "@/components/ui/container";
-import { WalletButton } from "../wallet-button";
+import { Container } from '@/components/ui/container';
+
+import { WalletButton } from '../wallet-button';
 
 export const NavBar = () => {
   return (

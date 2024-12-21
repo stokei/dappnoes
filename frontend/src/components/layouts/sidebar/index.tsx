@@ -1,9 +1,10 @@
-import { SidebarContent, SidebarHeader, SidebarProvider, Sidebar as SidebarUI } from "@/components/ui/sidebar"
-import Title from "@/components/ui/title"
-import { SITE_NAME } from "@/constants/site-info"
-import { routes } from "@/routes"
-import Link from "next/link"
-import { PropsWithChildren } from "react"
+import Link from 'next/link';
+import { PropsWithChildren } from 'react';
+
+import { Sidebar as SidebarUI,SidebarContent, SidebarHeader, SidebarProvider } from '@/components/ui/sidebar';
+import Title from '@/components/ui/title';
+import { SITE_NAME } from '@/constants/site-info';
+import { routes } from '@/routes';
 
 export const Sidebar = ({ children }: PropsWithChildren) => {
   return (
@@ -23,5 +24,5 @@ export const Sidebar = ({ children }: PropsWithChildren) => {
         </SidebarUI>
       </SidebarProvider>
     </div>
-  )
-}
+  );
+};

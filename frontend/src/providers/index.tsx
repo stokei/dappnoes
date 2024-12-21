@@ -1,11 +1,14 @@
-"use client";
+'use client';
+
+import { PropsWithChildren } from 'react';
+import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { WagmiProvider } from 'wagmi';
 
 import { walletsConfig } from '@/configs/wallets';
-import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { PropsWithChildren } from "react";
-import { WagmiProvider } from 'wagmi';
-import { ApiClientProvider } from '../contexts/api-client';
 import { TranslationsProvider } from '@/contexts/translations';
+import { WebsocketProvider } from '@/contexts/websocket';
+
+import { ApiClientProvider } from '../contexts/api-client';
 
 export const Providers = ({ children }: PropsWithChildren) => {
   return (
@@ -13,10 +16,12 @@ export const Providers = ({ children }: PropsWithChildren) => {
       <ApiClientProvider>
         <RainbowKitProvider>
           <TranslationsProvider>
-            {children}
+            <WebsocketProvider>
+              {children}
+            </WebsocketProvider>
           </TranslationsProvider>
         </RainbowKitProvider>
       </ApiClientProvider>
     </WagmiProvider>
   );
-}
+};

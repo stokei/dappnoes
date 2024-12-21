@@ -1,20 +1,20 @@
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { injected } from 'wagmi/connectors';
 
 export const useUser = () => {
-  const { connect } = useConnect()
-  const { disconnect } = useDisconnect()
-  const { address: accountAddress, isConnected, isConnecting } = useAccount()
+  const { connect } = useConnect();
+  const { disconnect } = useDisconnect();
+  const { address: accountAddress, isConnected, isConnecting } = useAccount();
 
   const onConnect = async () => {
     try {
-      connect({ connector: injected() })
+      connect({ connector: injected() });
     } catch {}
   };
 
   const onDisconnect = () => {
     try {
-      disconnect()
+      disconnect();
     } catch {}
   };
 
@@ -24,5 +24,5 @@ export const useUser = () => {
     accountAddress,
     onConnect,
     onDisconnect
-  }
-}
+  };
+};

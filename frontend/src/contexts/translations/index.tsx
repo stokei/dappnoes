@@ -1,8 +1,9 @@
+import { PropsWithChildren } from 'react';
+import { IntlProvider } from 'react-intl';
+
 import { defaultLanguage, LANGUAGE } from '@/constants/language';
 import { useUser } from '@/hooks/use-user';
 import { messages } from '@/i18n/messages';
-import { PropsWithChildren } from 'react';
-import { IntlProvider } from 'react-intl';
 
 export { IntlProvider } from 'react-intl';
 

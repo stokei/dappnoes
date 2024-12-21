@@ -1,3 +1,3 @@
 export const ptBRMessages = {
-  home: "Início",
+  home: 'Início',
 };

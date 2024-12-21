@@ -1,7 +1,9 @@
-import { PageLayout } from "@/components/layouts";
-import { PrivateRoute } from "@/components/private-route";
-import { PropsWithChildren } from "react";
-import { Sidebar } from "./_components/sidebar";
+import { PropsWithChildren } from 'react';
+
+import { PageLayout } from '@/components/layouts';
+import { PrivateRoute } from '@/components/private-route';
+
+import { Sidebar } from './_components/sidebar';
 
 export default function DashboardLayout({
   children,
@@ -17,5 +19,5 @@ export default function DashboardLayout({
         </PageLayout.Content>
       </PageLayout.Root>
     </PrivateRoute>
-  )
+  );
 }

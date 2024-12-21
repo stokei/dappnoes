@@ -6,8 +6,8 @@ interface TextProps {
 
 const Text = ({ size = 'md', children }: PropsWithChildren<TextProps>) => {
   const sizes = {
-    sm: 'text-sm',  
-    md: 'text-base',  
+    sm: 'text-sm',
+    md: 'text-base',
     lg: 'text-lg'
   };
 

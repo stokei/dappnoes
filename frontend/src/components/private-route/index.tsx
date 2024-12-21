@@ -1,9 +1,11 @@
-"use client";
+'use client';
+
+import { PropsWithChildren, useEffect } from 'react';
 
 import { useNavigate } from '@/hooks/use-navigate';
 import { useUser } from '@/hooks/use-user';
 import { routes } from '@/routes';
-import { PropsWithChildren, useEffect } from 'react';
+
 import { GlobalLoading } from '../global-loading';
 
 export const PrivateRoute = ({ children }: PropsWithChildren) => {
@@ -18,7 +20,7 @@ export const PrivateRoute = ({ children }: PropsWithChildren) => {
       if (!isConnected) {
         return push(routes.auth.login);
       }
-    }
+    };
     checkAuth();
   }, [isConnected, isLoading, push]);
 
@@ -29,4 +31,4 @@ export const PrivateRoute = ({ children }: PropsWithChildren) => {
   }
 
   return <>{children}</>;
-}
+};

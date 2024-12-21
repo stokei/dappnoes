@@ -1,11 +1,12 @@
-"use client";
+'use client';
+
+import { useEffect } from 'react';
 
 import { PageLayout } from '@/components/layouts';
 import { NavBar } from '@/components/navbar';
 import { useNavigate } from '@/hooks/use-navigate';
 import { useUser } from '@/hooks/use-user';
 import { routes } from '@/routes';
-import { useEffect } from 'react';
 
 export default function Page() {
   const { isConnected } = useUser();
@@ -16,7 +17,7 @@ export default function Page() {
       if (isConnected) {
         return push(routes.dashboard.home);
       }
-    }
+    };
     checkAuth();
   }, [isConnected, push]);
 

@@ -1,4 +1,4 @@
-import { I18nKey } from "@/types/messages";
+import { I18nKey } from '@/types/messages';
 
 export interface FormatNumber {
   (value: number): string | undefined;
