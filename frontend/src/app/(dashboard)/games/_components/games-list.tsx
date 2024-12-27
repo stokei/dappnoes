@@ -1,5 +1,6 @@
 'use client';
 
+import { GlobalLoading } from '@/components/global-loading';
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerTrigger } from '@/components/ui/drawer';
 import { Stack } from '@/components/ui/stack';
@@ -12,7 +13,7 @@ import { GamesItem } from './games-item';
 
 export const GamesList = () => {
   const translate = useTranslations();
-  const { games } = useGetGames();
+  const { games, isLoading } = useGetGames();
 
   return (
     <Stack>
@@ -26,12 +27,18 @@ export const GamesList = () => {
         </div>
         <CreateGameDrawer />
       </Drawer>
-      {games?.length > 0 && (
-        <Stack>
-          {games?.map(game => (
-            <GamesItem key={game.id} game={game} />
-          ))}
-        </Stack>
+      {isLoading ? (
+        <GlobalLoading />
+      ) : (
+        <>
+          {games?.length > 0 && (
+            <Stack>
+              {games?.map(game => (
+                <GamesItem key={game.id} game={game} />
+              ))}
+            </Stack>
+          )}
+        </>
       )}
     </Stack>
   );

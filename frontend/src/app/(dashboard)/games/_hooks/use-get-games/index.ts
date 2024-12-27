@@ -1,27 +1,26 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useReadContract } from 'wagmi';
 
-import { contractData } from '@/constants/contract-data';
-import { useContract } from '@/hooks/use-contract';
+import { WebSocketMessages } from '@/constants/websocket-messages';
+import { useContractQuery } from '@/hooks/use-contract-query';
 import { useWebsocket } from '@/hooks/use-websocket';
-import { WebSocketMessages } from '@/services/api/constants/websocket-messages';
-import { Game } from '@/services/api/types/game';
-
+import { Game } from '@/types/game';
 
 export const useGetGames = () => {
   const [games, setGames] = useState<Game[]>([]);
   const { socketConnection } = useWebsocket();
-  const { contract } = useContract();
 
-  const { data, isError, error, isLoading } = useReadContract({
-    address: contract,
-    abi: contractData.abi,
-    functionName: 'games',
-    args: [0],
+  const { data, isLoading } = useContractQuery<Game[]>({
+    functionName: 'getAllGames',
+    args: []
   });
-  console.log({ data, error: error?.shortMessage, isError, isLoading });
+
+  useEffect(() => {
+    if(data?.length){
+      setGames(data);
+    }
+  }, [data]);
 
   useEffect(() => {
     socketConnection?.on(WebSocketMessages.GAME_CREATED, (newGame: Game) => {
@@ -38,6 +37,7 @@ export const useGetGames = () => {
   }, [socketConnection]);
 
   return {
-    games
+    games,
+    isLoading
   };
 };

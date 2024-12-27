@@ -10,34 +10,37 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Stack } from '@/components/ui/stack';
 import { useTranslations } from '@/hooks/use-translations';
-import { useUser } from '@/hooks/use-user';
 
 import { useCreateGame } from '../_hooks/use-create-game';
 
 const formSchema = z.object({
-  name: z.string().min(1, { message: 'requirede' }),
+  name: z.string().min(1, { message: 'required' }),
+  entryFee: z
+    .string()
+    .nonempty({ message: 'required' })
+    .regex(/^\d*\.?\d*$/, { message: 'invalidNumber' })
+    .transform((value) => parseFloat(value))
+    .refine((value) => value > 0, { message: 'greaterThanZero' }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 export const CreateGameDrawer = () => {
   const translate = useTranslations();
-  const { onCreateGame } = useCreateGame();
-  const { accountAddress } = useUser();
+  const { onCreateGame, isLoading } = useCreateGame();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: ''
+      name: '',
+      entryFee: 0
     }
   });
 
-  const onSubmit = ({ name }: FormValues) => {
+  const onSubmit = ({ name, entryFee }: FormValues) => {
     onCreateGame({
       name,
-      owner: accountAddress || '',
-      entryFee: 1.1589632,
-      maxPlayers: 2
+      entryFee,
     });
   };
 
@@ -64,6 +67,24 @@ export const CreateGameDrawer = () => {
                   <FormControl>
                     <Input
                       placeholder={translate.formatMessage({ id: 'name' })}
+                      disabled={isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="entryFee"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{translate.formatMessage({ id: 'entryFee' })} (ETH)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="0.01"
+                      disabled={isLoading}
                       {...field}
                     />
                   </FormControl>
@@ -79,6 +100,7 @@ export const CreateGameDrawer = () => {
               <Button
                 width="full"
                 variant="outline"
+                disabled={isLoading}
               >
                 {translate.formatMessage({ id: 'cancel' })}
               </Button>
@@ -87,6 +109,7 @@ export const CreateGameDrawer = () => {
               width="full"
               type="submit"
               form="create-game-form"
+              loading={isLoading}
             >
               {translate.formatMessage({ id: 'create' })}
             </Button>
