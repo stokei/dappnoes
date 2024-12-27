@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 235 40" preserveAspectRatio="xMidYMid meet">
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="text-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#A78BFA" /> <!-- purple-400 -->
+      <stop offset="100%" style="stop-color:#60A5FA" /> <!-- blue-400 -->
+    </linearGradient>
+  </defs>
+
+  <!-- Primeiro dado (Dice1) -->
+  <g transform="translate(0, 0)">
+    <rect x="0" y="0" width="40" height="40" rx="2" 
+          fill="#A78BFA" /> <!-- purple-400 -->
+    <circle cx="20" cy="20" r="4" fill="white" />
+  </g>
+
+  <!-- Segundo dado (Dice4) -->
+  <g transform="translate(40, 0)">
+    <rect x="0" y="0" width="40" height="40" rx="2"
+          fill="#60A5FA" /> <!-- blue-400 -->
+    <circle cx="12" cy="12" r="4" fill="white" />
+    <circle cx="28" cy="12" r="4" fill="white" />
+    <circle cx="12" cy="28" r="4" fill="white" />
+    <circle cx="28" cy="28" r="4" fill="white" />
+  </g>
+
+  <!-- Texto "Dappnoes" -->
+  <text x="90" y="22" 
+        font-family="Arial, sans-serif" 
+        font-size="30" 
+        font-weight="bold" 
+        fill="url(#text-gradient)"
+        dominant-baseline="middle">
+    Dappnoes
+  </text>
+</svg>

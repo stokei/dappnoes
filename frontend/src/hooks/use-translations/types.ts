@@ -12,12 +12,10 @@ export interface FormatMoney {
   ({
     currency,
     amount,
-    minorUnit,
     showSymbol,
   }: {
     currency: string;
     amount: number;
-    minorUnit?: number;
     showSymbol?: boolean;
   }): string;
 }

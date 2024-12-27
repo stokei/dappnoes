@@ -1,10 +1,13 @@
 export const routes = {
   home: '/',
   auth: {
-    login: '/login',
+    login: (data?: { redirectTo?: string }) => `/login${data?.redirectTo ? `?redirectTo=${data?.redirectTo}` : ''}`,
   },
   dashboard: {
-    home: '/rooms',
-    rooms: '/rooms',
-  },
+    home: '/games',
+    games: '/games',
+    game: ({ game }: { game: string }) => ({
+      home: `/games/${game}`,
+    }),
+  }
 };

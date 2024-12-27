@@ -17,7 +17,9 @@ export const WebsocketProvider = ({ children }: PropsWithChildren) => {
   const [socketConnection, setSocketConnection] = useState<Socket | undefined>();
 
   useEffect(() => {
-    const socketInstance = io(WEBSOCKET_API_URL);
+    const socketInstance = io(WEBSOCKET_API_URL, {
+      transports: ['websocket'],
+    });
     setSocketConnection(socketInstance);
     socketInstance.on('connect', () => {
       setIsConnectedSocket(true);

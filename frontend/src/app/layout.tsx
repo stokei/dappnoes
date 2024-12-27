@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
+import { BackgroundContainer } from '@/components/ui/background-container';
+import { Toaster } from '@/components/ui/toaster';
 import { SITE_NAME } from '@/constants/site-info';
 import { Providers } from '@/providers';
 
@@ -32,7 +34,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          {children}
+          <BackgroundContainer>
+            {children}
+          </BackgroundContainer>
+          <Toaster />
         </Providers>
       </body>
     </html>

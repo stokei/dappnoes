@@ -6,5 +6,3 @@ export abstract class BaseWebSocketController {
   @WebSocketServer()
     server: SocketServer;
 }
-
-export abstract class BaseRestController {}

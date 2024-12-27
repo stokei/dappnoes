@@ -29,17 +29,16 @@ export const useTranslations = (): Translations => {
   );
 
   const formatMoney: FormatMoney = useCallback(
-    ({ currency, amount, minorUnit, showSymbol = false }) => {
-      const valueAmount = amount ? amount / Math.pow(10, minorUnit || 0) : 0;
+    ({ currency, amount, showSymbol = true }) => {
       try {
-        return new Intl.NumberFormat(intl.locale, {
-          ...(showSymbol && { style: 'currency' }),
-          currency,
-          minimumFractionDigits: minorUnit,
-          maximumFractionDigits: 10,
-        }).format(valueAmount);
+        const value = new Intl.NumberFormat(intl.locale, {
+          style: 'decimal',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 18,
+        }).format(amount);
+        return `${value}${showSymbol ? ' '+currency : ''}`;
       } catch {
-        return '0';
+        return `0${showSymbol ? ' '+currency : ''}`;
       }
     },
     [intl]

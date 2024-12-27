@@ -1,8 +1,10 @@
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export const useNavigate = () => {
   const { push } = useRouter();
+  const pathname = usePathname();
   return {
-    push
+    push,
+    pathname
   };
 };

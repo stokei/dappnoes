@@ -1,5 +1,28 @@
 import { LanguageMessages } from '@/types/messages';
 
 export const enUSMessages: LanguageMessages = {
+  id: 'ID',
+  required: 'Required',
+  name: 'Name',
   home: 'Home',
+  owner: 'Owner',
+  player: 'Player',
+  players: 'Players',
+  free: 'Free',
+  create: 'Create',
+  cancel: 'Cancel',
+  save: 'Save',
+  entryFee: 'Entry fee',
+  maxPlayers: 'Max players',
+  createGame: 'Create game',
+  loginGameSlogan: 'Where every move is eternalized on the blockchain',
+  loginInspirationalQuote: 'In each domino piece, a new story unfolds on the blockchain. Connect and be part of this revolution.',
+  loginConnectWith: 'Connect with',
+  connectWallet: 'Connect wallet',
+  loginFooterMessage: 'Play securely and transparently',
+  wrongNetwork: 'Wrong Network',
+  play: 'Play',
+  waiting: 'Waiting',
+  finished: 'Finished',
+  playing: 'Playing',
 };

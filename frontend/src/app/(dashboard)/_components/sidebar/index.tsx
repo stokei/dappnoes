@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Home as HomeIcon } from 'lucide-react';
 
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import Text from '@/components/ui/text';
+import { Text } from '@/components/ui/text';
 import { useTranslations } from '@/hooks/use-translations';
 import { routes } from '@/routes';
 

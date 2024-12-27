@@ -1,3 +1,3 @@
-import { RoomsModule } from './rooms/rooms.module';
+import { WebSocketModule } from './websocket/websocket.module';
 
-export const Modules = [RoomsModule];
+export const Modules = [WebSocketModule];

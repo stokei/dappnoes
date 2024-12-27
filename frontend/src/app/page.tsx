@@ -6,6 +6,7 @@ import { GlobalLoading } from '@/components/global-loading';
 import { useNavigate } from '@/hooks/use-navigate';
 import { useUser } from '@/hooks/use-user';
 import { routes } from '@/routes';
+import { getLastPathnameAuthenticated } from '@/utils/cookies/last-pathname-authenticated';
 
 export default function Page() {
   const { isConnected } = useUser();
@@ -16,7 +17,7 @@ export default function Page() {
       if (isConnected) {
         return push(routes.dashboard.home);
       }
-      return push(routes.auth.login);
+      return push(routes.auth.login({ redirectTo: getLastPathnameAuthenticated() }));
     };
     checkAuth();
   }, [isConnected, push]);

@@ -1,5 +1,11 @@
+const commonMethodsMock = {
+  create: jest.fn(),
+  update: jest.fn(),
+  findMany: jest.fn(),
+  findFirst: jest.fn(),
+};
 export const createPrismaClientMock = () => ({
-  room: {
-    create: jest.fn(),
-  },
+  game: commonMethodsMock,
+  gamePlayer: commonMethodsMock,
+  gameMove: commonMethodsMock,
 });

@@ -2,11 +2,11 @@ import Link from 'next/link';
 import { PropsWithChildren } from 'react';
 
 import { Sidebar as SidebarUI,SidebarContent, SidebarHeader, SidebarProvider } from '@/components/ui/sidebar';
-import Title from '@/components/ui/title';
+import { Title } from '@/components/ui/title';
 import { SITE_NAME } from '@/constants/site-info';
 import { routes } from '@/routes';
 
-export const Sidebar = ({ children }: PropsWithChildren) => {
+export const PageLayoutSidebar = ({ children }: PropsWithChildren) => {
   return (
     <div>
       <SidebarProvider defaultOpen>
