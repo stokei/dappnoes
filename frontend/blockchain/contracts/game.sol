@@ -4,7 +4,6 @@ pragma solidity ^0.8.28;
 contract DominoGame {
     enum GameStatus {
         PENDING,
-        WAITING_FOR_PLAYERS,
         PLAYING,
         CANCELED,
         COMPLETED,
@@ -15,15 +14,16 @@ contract DominoGame {
         uint256 id;
         string name;
         address owner;
+        address winner;
         GameStatus status;
         uint256 entryFee;
         uint256 prizePool;
         uint256 maxPlayers;
         address[] players;
         address[] activePlayers;
-        mapping(address => uint256[]) playerPieces;
-        uint256[] deck;
-        uint256[] board;
+        mapping(address => uint256[]) playerDeck;
+        uint256[] gameDeck;
+        uint256[] boardDeck;
         uint256 currentPlayerIndex;
     }
 
@@ -31,20 +31,21 @@ contract DominoGame {
         uint256 id;
         string name;
         address owner;
+        address winner;
         GameStatus status;
         uint256 entryFee;
         uint256 prizePool;
         uint256 maxPlayers;
         address[] players;
         address[] activePlayers;
-        uint256[] deck;
-        uint256[] board;
-        uint256[] playerPieces;
+        uint256[] gameDeck;
+        uint256[] boardDeck;
+        uint256[] playerDeck;
     }
 
     struct CurrentPlayer {
         uint256 playerIndex;
-        uint256[] playerPieces;
+        uint256[] playerDeck;
         GameStatus gameStatus;
     }
 
@@ -73,12 +74,14 @@ contract DominoGame {
     function joinGame(uint256 gameId) public payable {
         Game storage game = games[gameId];
         require(
-            game.status == GameStatus.PENDING ||
-                game.status == GameStatus.WAITING_FOR_PLAYERS,
+            game.status == GameStatus.PENDING,
             "gameNotAcceptingPlayers"
         );
         require(msg.value == game.entryFee, "incorrectEntryFee");
         require(game.players.length < game.maxPlayers, "gameIsFull");
+        for (uint256 i = 0; i < game.players.length; i++) {
+            require(game.players[i] != msg.sender, "playerAlreadyInGame");
+        }
 
         game.players.push(msg.sender);
         game.activePlayers.push(msg.sender);
@@ -100,49 +103,31 @@ contract DominoGame {
         newGame.status = GameStatus.PENDING;
         newGame.entryFee = entryFee;
 
-        gameCounter++;
-
         emit GameCreated(gameCounter, msg.sender, entryFee);
+
+        gameCounter++;
 
         if (isPlayer) {
             joinGame(newGame.id);
         }
     }
 
-    function requestStartGame(uint256 gameId) external onlyOwner(gameId) {
-        Game storage game = games[gameId];
-        require(game.status == GameStatus.PENDING, "gameAlreadyStarted");
-        require(game.players.length > 1, "notEnoughPlayers");
-
-        game.status = GameStatus.WAITING_FOR_PLAYERS;
-    }
-
-    function cancelRequestStartGame(uint256 gameId) external onlyOwner(gameId) {
-        Game storage game = games[gameId];
-        require(
-            game.status == GameStatus.WAITING_FOR_PLAYERS,
-            "gameAlreadyStarted"
-        );
-
-        game.status = GameStatus.PENDING;
-    }
-
     function startGame(uint256 gameId) external onlyOwner(gameId) {
         Game storage game = games[gameId];
         require(game.players.length >= 2, "notEnoughPlayers");
         require(
-            game.status == GameStatus.WAITING_FOR_PLAYERS,
+            game.status == GameStatus.PENDING,
             "gameNotReadyToStart"
         );
 
-        game.deck = generateDeck();
-        shuffleDeck(game.deck);
+        game.gameDeck = generateDeck();
+        shuffleDeck(game.gameDeck);
 
         for (uint256 i = 0; i < game.players.length; i++) {
             for (uint256 j = 0; j <= 6; j++) {
-                uint256 piece = game.deck[game.deck.length - 1];
-                game.playerPieces[game.players[i]].push(piece);
-                game.deck.pop();
+                uint256 piece = game.gameDeck[game.gameDeck.length - 1];
+                game.playerDeck[game.players[i]].push(piece);
+                game.gameDeck.pop();
             }
         }
 
@@ -150,6 +135,56 @@ contract DominoGame {
         game.currentPlayerIndex = 0;
 
         emit GameStarted(gameId);
+    }
+
+    function endGame(uint256 gameId, address winner) internal {
+        Game storage game = games[gameId];
+        require(game.status == GameStatus.PLAYING, "gameIsNotActive");
+
+        game.status = GameStatus.COMPLETED;
+        balances[winner] += game.prizePool;
+        game.winner = winner;
+
+        emit GameCompleted(gameId, winner);
+    }
+
+    function checkMovesAvailable(
+        Game storage game
+    ) internal view returns (bool) {
+        for (uint256 i = 0; i < game.activePlayers.length; i++) {
+            address player = game.activePlayers[i];
+            uint256[] storage playerDeck = game.playerDeck[player];
+
+            for (uint256 j = 0; j < playerDeck.length; j++) {
+                uint256 piece = playerDeck[j];
+                uint256 left = piece / 10;
+                uint256 right = piece % 10;
+
+                uint256 boardStart = game.boardDeck[0];
+                uint256 boardEnd = game.boardDeck[game.boardDeck.length - 1];
+
+                if (
+                    left == boardStart / 10 ||
+                    right == boardStart / 10 ||
+                    left == boardEnd % 10 ||
+                    right == boardEnd % 10
+                ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function endGameAsDraw(uint256 gameId) internal {
+        Game storage game = games[gameId];
+        game.status = GameStatus.DRAW;
+
+        for (uint256 i = 0; i < game.players.length; i++) {
+            balances[game.players[i]] += game.entryFee;
+        }
+
+        emit GameDraw(gameId);
     }
 
     function makeMove(
@@ -162,82 +197,29 @@ contract DominoGame {
 
         uint256 piece = left * 10 + right;
         require(
-            hasPiece(game.playerPieces[msg.sender], piece),
+            hasPiece(game.playerDeck[msg.sender], piece),
             "playerDoesNotHaveThePiece"
         );
 
-        removePiece(game.playerPieces[msg.sender], piece);
-        game.board.push(piece);
+        removePiece(game.playerDeck[msg.sender], piece);
+        game.boardDeck.push(piece);
+
+        if (game.playerDeck[msg.sender].length == 0) {
+            endGame(gameId, msg.sender);
+            return;
+        }
+
+        bool movesAvailable = checkMovesAvailable(game);
+        if (!movesAvailable) {
+            endGameAsDraw(gameId);
+            return;
+        }
 
         game.currentPlayerIndex =
             (game.currentPlayerIndex + 1) %
             game.activePlayers.length;
 
         emit PlayerMoved(gameId, msg.sender, piece);
-    }
-
-    function makeAutomaticMove(
-        uint256 gameId
-    ) external onlyActivePlayer(gameId) {
-        Game storage game = games[gameId];
-        require(game.status == GameStatus.PLAYING, "gameIsNotActive");
-        require(game.board.length > 0, "noPiecesOnTheBoardYet");
-
-        uint256[] storage playerPieces = game.playerPieces[msg.sender];
-        uint256 boardStart = game.board[0];
-        uint256 boardEnd = game.board[game.board.length - 1];
-
-        bool moveMade = false;
-
-        for (uint256 i = 0; i < playerPieces.length; i++) {
-            uint256 piece = playerPieces[i];
-
-            if (piece / 10 == boardEnd % 10 || piece % 10 == boardEnd % 10) {
-                game.board.push(piece);
-                removePiece(playerPieces, piece);
-
-                emit PlayerMoved(gameId, msg.sender, piece);
-                moveMade = true;
-                break;
-            } else if (
-                piece / 10 == boardStart / 10 || piece % 10 == boardStart % 10
-            ) {
-                uint256[] memory newBoard = new uint256[](
-                    game.board.length + 1
-                );
-                newBoard[0] = piece;
-
-                for (uint256 j = 0; j < game.board.length; j++) {
-                    newBoard[j + 1] = game.board[j];
-                }
-
-                game.board = newBoard;
-                removePiece(playerPieces, piece);
-
-                emit PlayerMoved(gameId, msg.sender, piece);
-                moveMade = true;
-                break;
-            }
-        }
-
-        require(moveMade, "noValidMoveAvailable");
-
-        game.currentPlayerIndex =
-            (game.currentPlayerIndex + 1) %
-            game.activePlayers.length;
-    }
-
-    function endGame(
-        uint256 gameId,
-        address winner
-    ) external onlyOwner(gameId) {
-        Game storage game = games[gameId];
-        require(game.status == GameStatus.PLAYING, "gameIsNotActive");
-
-        game.status = GameStatus.COMPLETED;
-        balances[winner] += game.prizePool;
-
-        emit GameCompleted(gameId, winner);
     }
 
     function cancelGame(uint256 gameId) external onlyOwner(gameId) {
@@ -325,55 +307,30 @@ contract DominoGame {
         return false;
     }
 
-    function getCurrentPlayer(
-        uint256 gameId
-    ) external view returns (CurrentPlayer memory) {
-        Game storage game = games[gameId];
-        require(isActivePlayer(gameId, msg.sender), "playerNotInGame");
-
-        uint256 playerIndex;
-        for (uint256 i = 0; i < game.activePlayers.length; i++) {
-            if (game.activePlayers[i] == msg.sender) {
-                playerIndex = i;
-                break;
-            }
-        }
-
-        uint256[] memory playerPieces = new uint256[](
-            game.playerPieces[msg.sender].length
-        );
-        for (uint256 i = 0; i < game.playerPieces[msg.sender].length; i++) {
-            playerPieces[i] = game.playerPieces[msg.sender][i];
-        }
-
-        return
-            CurrentPlayer({
-                playerIndex: playerIndex,
-                playerPieces: playerPieces,
-                gameStatus: game.status
-            });
-    }
-
     function getGame(
         uint256 gameId
     ) external view returns (GameResponse memory) {
         Game storage game = games[gameId];
-        uint256[] memory playerPieces = game.playerPieces[msg.sender];
+
+        require(game.owner != address(0), "gameNotFound");
+
+        uint256[] memory playerDeck = game.playerDeck[msg.sender];
 
         return
             GameResponse({
                 id: game.id,
                 name: game.name,
                 owner: game.owner,
+                winner: game.winner,
                 status: game.status,
                 entryFee: game.entryFee,
                 prizePool: game.prizePool,
                 maxPlayers: game.maxPlayers,
                 players: game.players,
                 activePlayers: game.activePlayers,
-                deck: game.deck,
-                board: game.board,
-                playerPieces: playerPieces
+                gameDeck: game.gameDeck,
+                boardDeck: game.boardDeck,
+                playerDeck: playerDeck
             });
     }
 
@@ -382,21 +339,22 @@ contract DominoGame {
 
         for (uint256 i = 0; i < gameCounter; i++) {
             Game storage game = games[i];
-            uint256[] memory playerPieces = game.playerPieces[msg.sender];
+            uint256[] memory playerDeck = game.playerDeck[msg.sender];
 
             gamesResponse[i] = GameResponse({
                 id: game.id,
                 name: game.name,
                 owner: game.owner,
+                winner: game.winner,
                 status: game.status,
                 entryFee: game.entryFee,
                 prizePool: game.prizePool,
                 maxPlayers: game.maxPlayers,
                 players: game.players,
                 activePlayers: game.activePlayers,
-                deck: game.deck,
-                board: game.board,
-                playerPieces: playerPieces
+                gameDeck: game.gameDeck,
+                boardDeck: game.boardDeck,
+                playerDeck: playerDeck
             });
         }
 

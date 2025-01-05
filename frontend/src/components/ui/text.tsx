@@ -30,12 +30,17 @@ const textVariants = cva(
   }
 );
 
-interface TextProps extends VariantProps<typeof textVariants> {}
+interface TextProps extends VariantProps<typeof textVariants> {
+  truncate?: boolean;
+}
 
-export const Text = ({ size, fontWeight, width, children }: PropsWithChildren<TextProps>) => {
+export const Text = ({ size, fontWeight, width, truncate, children }: PropsWithChildren<TextProps>) => {
   return (
     <p
-      className={cn(textVariants({ width, size, fontWeight }))}
+      className={cn(
+        textVariants({ width, size, fontWeight }),
+        truncate && 'truncate'
+      )}
     >
       {children}
     </p>

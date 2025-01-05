@@ -1,6 +1,5 @@
 export enum GameStatus {
   PENDING,
-  WAITING_FOR_PLAYERS,
   PLAYING,
   CANCELED,
   COMPLETED,
@@ -11,15 +10,39 @@ export interface Game {
   id: bigint;
   name: string;
   owner: string;
+  winner: string;
   status: GameStatus;
   entryFee: bigint;
   maxPlayers: number;
   prizePool: bigint;
   players: string[];
   activePlayers: string[];
-  deck: bigint[];
-  board: bigint[];
-  playerPieces: bigint[];
+  gameDeck: bigint[];
+  boardDeck: bigint[];
+  playerDeck: bigint[];
+}
+
+export interface GamePiece {
+  position: number;
+  left: number;
+  right: number;
+}
+export interface GameMapped {
+  id: number;
+  name: string;
+  owner: string;
+  winner: string;
+  status: GameStatus;
+  entryFee: bigint;
+  maxPlayers: number;
+  isOwner: boolean;
+  isActivePlayer: boolean;
+  prizePool: bigint;
+  players: string[];
+  activePlayers: string[];
+  gameDeck: GamePiece[];
+  boardDeck: GamePiece[];
+  playerDeck: GamePiece[];
 }
 
 export interface CreateGameData {

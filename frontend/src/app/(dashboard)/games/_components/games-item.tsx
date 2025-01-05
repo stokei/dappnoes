@@ -1,17 +1,16 @@
-'use client';
-
 import { GameStatusBadge } from '@/components/game-status';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Price } from '@/components/ui/price';
 import { Stack } from '@/components/ui/stack';
 import { Term, TermLabel, TermValue } from '@/components/ui/term-value';
 import { useTranslations } from '@/hooks/use-translations';
-import { Game } from '@/types/game';
-import { weisToEthers } from '@/utils/weis';
+import { GameMapped } from '@/types/game';
+
+import { PlayButton } from './play-button';
 
 interface GamesItemProps {
-  game: Game;
+  game: GameMapped;
 }
 export const GamesItem = ({ game }: GamesItemProps) => {
   const translate = useTranslations();
@@ -46,7 +45,7 @@ export const GamesItem = ({ game }: GamesItemProps) => {
               {translate.formatMessage({ id: 'players' })}
             </TermLabel>
             <TermValue>
-              {game.activePlayers?.length}/{game.players?.length}
+              {game.activePlayers?.length}/{game.maxPlayers}
             </TermValue>
           </Term>
         </Stack>
@@ -59,7 +58,9 @@ export const GamesItem = ({ game }: GamesItemProps) => {
             </TermLabel>
             <TermValue>
               {game.entryFee ? (
-                weisToEthers(game.entryFee)
+                <Price
+                  amount={game.entryFee}
+                />
               ) : (
                 <Badge color="info">
                   {translate.formatMessage({ id: 'free' })}
@@ -67,9 +68,9 @@ export const GamesItem = ({ game }: GamesItemProps) => {
               )}
             </TermValue>
           </Term>
-          <Button>
-            {translate.formatMessage({ id: 'play' })}
-          </Button>
+          <PlayButton
+            game={game}
+          />
         </Stack>
       </CardFooter>
     </Card>

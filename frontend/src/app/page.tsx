@@ -9,18 +9,21 @@ import { routes } from '@/routes';
 import { getLastPathnameAuthenticated } from '@/utils/cookies/last-pathname-authenticated';
 
 export default function Page() {
-  const { isConnected } = useUser();
+  const { isConnected, isLoading } = useUser();
   const { push } = useNavigate();
 
   useEffect(() => {
     const checkAuth = () => {
+      if(isLoading){
+        return;
+      }
       if (isConnected) {
         return push(routes.dashboard.home);
       }
       return push(routes.auth.login({ redirectTo: getLastPathnameAuthenticated() }));
     };
     checkAuth();
-  }, [isConnected, push]);
+  }, [isConnected, isLoading, push]);
 
   return (
     <GlobalLoading />

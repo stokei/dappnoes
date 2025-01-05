@@ -1,10 +1,18 @@
+import { useEffect, useState } from 'react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { injected } from 'wagmi/connectors';
 
 export const useUser = () => {
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
-  const { address: accountAddress, isConnected, isConnecting } = useAccount();
+  const [alreadyStartLoading, setAlreadyStartLoading] = useState(false);
+  const { address: accountAddress, isConnecting: isLoading } = useAccount();
+
+  useEffect(() => {
+    if(isLoading || accountAddress){
+      setAlreadyStartLoading(true);
+    }
+  }, [accountAddress, isLoading]);
 
   const onConnect = async () => {
     try {
@@ -19,9 +27,9 @@ export const useUser = () => {
   };
 
   return {
-    isLoading: isConnecting,
-    isConnected,
-    accountAddress,
+    isLoading: !alreadyStartLoading || isLoading,
+    isConnected: !!accountAddress,
+    accountAddress: accountAddress as string,
     onConnect,
     onDisconnect
   };

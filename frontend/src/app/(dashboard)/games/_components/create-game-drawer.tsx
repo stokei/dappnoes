@@ -9,9 +9,8 @@ import { DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } f
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Stack } from '@/components/ui/stack';
+import { useCreateGame } from '@/hooks/use-create-game';
 import { useTranslations } from '@/hooks/use-translations';
-
-import { useCreateGame } from '../_hooks/use-create-game';
 
 const formSchema = z.object({
   name: z.string().min(1, { message: 'required' }),

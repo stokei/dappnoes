@@ -6,7 +6,7 @@ import { WagmiProvider } from 'wagmi';
 
 import { walletsConfig } from '@/configs/wallets';
 import { TranslationsProvider } from '@/contexts/translations';
-import { WebsocketProvider } from '@/contexts/websocket';
+import { WebSocketProvider } from '@/contexts/websocket';
 
 import { ApiClientProvider } from '../contexts/api-client';
 
@@ -16,9 +16,9 @@ export const Providers = ({ children }: PropsWithChildren) => {
       <ApiClientProvider>
         <RainbowKitProvider>
           <TranslationsProvider>
-            <WebsocketProvider>
+            <WebSocketProvider>
               {children}
-            </WebsocketProvider>
+            </WebSocketProvider>
           </TranslationsProvider>
         </RainbowKitProvider>
       </ApiClientProvider>

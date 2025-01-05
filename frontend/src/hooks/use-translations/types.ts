@@ -10,13 +10,9 @@ export interface FormatMessage {
 
 export interface FormatMoney {
   ({
-    currency,
     amount,
-    showSymbol,
   }: {
-    currency: string;
-    amount: number;
-    showSymbol?: boolean;
+    amount: bigint;
   }): string;
 }
 

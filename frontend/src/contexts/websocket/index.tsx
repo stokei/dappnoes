@@ -5,14 +5,17 @@ import { io, Socket } from 'socket.io-client';
 
 import { WEBSOCKET_API_URL } from '@/environments';
 
-interface WebsocketContextValues {
+interface WebSocketContextValues {
   socketConnection: Socket | undefined;
   isConnectedSocket: boolean;
+  emitEvent: <TPayload = any>(eventName: string, eventPayload: TPayload) => void
+  onEvent: <TData = any>(eventName: string, callback: (data: TData) => void) => void
+  offEvent: <TData = any>(eventName: string, callback: (data: TData) => void) => void
 }
 
-export const WebsocketContext = createContext({} as WebsocketContextValues);
+export const WebSocketContext = createContext({} as WebSocketContextValues);
 
-export const WebsocketProvider = ({ children }: PropsWithChildren) => {
+export const WebSocketProvider = ({ children }: PropsWithChildren) => {
   const [isConnectedSocket, setIsConnectedSocket] = useState(false);
   const [socketConnection, setSocketConnection] = useState<Socket | undefined>();
 
@@ -32,15 +35,37 @@ export const WebsocketProvider = ({ children }: PropsWithChildren) => {
     };
   }, []);
 
+  const emitEvent: WebSocketContextValues['emitEvent'] = (eventName, eventPayload) => {
+    if(!socketConnection){
+      return;
+    }
+    socketConnection.emit(eventName, eventPayload);
+  };
+  const onEvent: WebSocketContextValues['emitEvent'] = (eventName, callback) => {
+    if(!socketConnection){
+      return;
+    }
+    socketConnection.on(eventName, callback as any);
+  };
+  const offEvent: WebSocketContextValues['emitEvent'] = (eventName, callback) => {
+    if(!socketConnection){
+      return;
+    }
+    socketConnection.off(eventName, callback as any);
+  };
+
   const value = {
     socketConnection,
-    isConnectedSocket
+    isConnectedSocket,
+    emitEvent,
+    onEvent,
+    offEvent
   };
   return (
-    <WebsocketContext
+    <WebSocketContext
       value={value}
     >
       {children}
-    </WebsocketContext>
+    </WebSocketContext>
   );
 };

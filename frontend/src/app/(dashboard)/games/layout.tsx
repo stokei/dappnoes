@@ -1,7 +1,6 @@
 import { PropsWithChildren } from 'react';
 
 import { NavBar } from '@/components/navbar';
-import { Container } from '@/components/ui/container';
 
 export default function GamesLayout({
   children,
@@ -9,9 +8,7 @@ export default function GamesLayout({
   return (
     <>
       <NavBar />
-      <Container direction="column">
-        {children}
-      </Container>
+      {children}
     </>
   );
 }

@@ -4,9 +4,8 @@ import { GlobalLoading } from '@/components/global-loading';
 import { Button } from '@/components/ui/button';
 import { Drawer, DrawerTrigger } from '@/components/ui/drawer';
 import { Stack } from '@/components/ui/stack';
+import { useGetGames } from '@/hooks/use-get-games';
 import { useTranslations } from '@/hooks/use-translations';
-
-import { useGetGames } from '../_hooks/use-get-games';
 
 import { CreateGameDrawer } from './create-game-drawer';
 import { GamesItem } from './games-item';

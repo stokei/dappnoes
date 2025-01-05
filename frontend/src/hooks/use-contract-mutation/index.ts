@@ -1,18 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useWriteContract } from 'wagmi';
-import { watchContractEvent } from 'wagmi/actions';
 
-import { walletsConfig } from '@/configs/wallets';
 import { contractData } from '@/constants/contract-data';
+import { I18nKey } from '@/types/messages';
+import { getErrorMessage } from '@/utils/get-error-message';
 
 import { useContract } from '../use-contract';
 import { useToast } from '../use-toast';
+import { useTranslations } from '../use-translations';
 import { useUser } from '../use-user';
+import { useWatchContractEvent } from '../use-watch-event';
 
 interface UseContractMutation<TSuccessData = any> {
   functionName: string;
   successEvent?: string;
-  onSuccess?: (data: TSuccessData) => void
+  onSuccess?: (data?: TSuccessData) => void
 }
 export const useContractMutation = <TSuccessData = any>({
   functionName,
@@ -20,35 +22,33 @@ export const useContractMutation = <TSuccessData = any>({
   onSuccess
 }: UseContractMutation<TSuccessData>) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { formatMessage } = useTranslations();
   const { accountAddress } = useUser();
   const { contract } = useContract();
   const { toast } = useToast();
 
-  useEffect(() => {
-    watchContractEvent(walletsConfig, {
-      address: contract,
-      abi: contractData.abi,
-      eventName: successEvent,
-      onLogs: (data) => {
-        onSuccess?.((data?.[0] as any)?.args);
-        setIsLoading(false);
-      },
-      onError: (error) => {
-        setIsLoading(false);
-        toast({
-          title: error?.message,
-          variant: 'destructive',
-        });
-      },
-    });
-  }, [contract, onSuccess, successEvent, toast]);
+  useWatchContractEvent({
+    eventName: successEvent,
+    onSuccess: (data) => {
+      onSuccess?.(data);
+      setIsLoading(false);
+    },
+    onError: () => {
+      setIsLoading(false);
+    },
+  });
 
   const { writeContractAsync } = useWriteContract({
     mutation: {
+      onSuccess: () => {
+        if(!successEvent){
+          onSuccess?.();
+        }
+      },
       onError: (error) => {
         setIsLoading(false);
         toast({
-          title: error?.message,
+          title: formatMessage({ id: getErrorMessage(error) as I18nKey }),
           variant: 'destructive',
         });
       },
@@ -61,7 +61,7 @@ export const useContractMutation = <TSuccessData = any>({
     }
     setIsLoading(true);
     await writeContractAsync({
-      account: accountAddress,
+      account: accountAddress as `0x${string}`,
       address: contract,
       abi: contractData.abi,
       functionName,

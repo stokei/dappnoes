@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 import { secondsToTime } from '@/utils/seconds-to-time';
+import { weisToEthers } from '@/utils/weis';
 
 import {
   FormatDate,
@@ -29,16 +30,16 @@ export const useTranslations = (): Translations => {
   );
 
   const formatMoney: FormatMoney = useCallback(
-    ({ currency, amount, showSymbol = true }) => {
+    ({ amount }) => {
       try {
         const value = new Intl.NumberFormat(intl.locale, {
           style: 'decimal',
           minimumFractionDigits: 2,
           maximumFractionDigits: 18,
-        }).format(amount);
-        return `${value}${showSymbol ? ' '+currency : ''}`;
+        }).format(parseFloat(weisToEthers(amount)));
+        return value;
       } catch {
-        return `0${showSymbol ? ' '+currency : ''}`;
+        return '0';
       }
     },
     [intl]

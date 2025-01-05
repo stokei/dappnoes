@@ -1,6 +1,5 @@
 'use client';
 
-
 import { useContractMutation } from '@/hooks/use-contract-mutation';
 import { useNavigate } from '@/hooks/use-navigate';
 import { routes } from '@/routes';
@@ -13,8 +12,8 @@ export const useCreateGame = () => {
     functionName: 'createGame',
     successEvent: 'GameCreated',
     onSuccess: (data) => {
-      if(data?.gameId){
-        return push(routes.dashboard.game({ game: data?.gameId?.toString() }).home);
+      if(data){
+        return push(routes.dashboard.game({ game: Number(data?.gameId)?.toString() }).home);
       }
     },
   });

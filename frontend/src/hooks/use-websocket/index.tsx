@@ -1,5 +1,5 @@
 import { useContext } from 'react';
 
-import { WebsocketContext } from '@/contexts/websocket';
+import { WebSocketContext } from '@/contexts/websocket';
 
-export const useWebsocket = () => useContext(WebsocketContext);
+export const useWebSocket = () => useContext(WebSocketContext);
