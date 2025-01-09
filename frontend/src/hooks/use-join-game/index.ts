@@ -12,7 +12,7 @@ export const useJoinGame = ({ game }: UseJoinGameParams) => {
   const { push } = useNavigate();
   const { onSubmit, isLoading } = useContractMutation<PlayerJoinedEvent>({
     functionName: 'joinGame',
-    successEvent: 'PlayerJoinedEvent',
+    successEvent: 'PlayerJoined',
     onSuccess: () => {
       return push(routes.dashboard.game({ game: game?.id?.toString() }).home);
     },

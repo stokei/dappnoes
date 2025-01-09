@@ -24,12 +24,16 @@ export const useWatchContractEvent = <TSuccessData = any>({
     if(!eventName){
       return;
     }
-    watchContractEvent(walletsConfig, {
+    let isFinished = false;
+    const clearEventListener = watchContractEvent(walletsConfig, {
       address: contract,
       abi: contractData.abi,
       eventName,
+      syncConnectedChain: true,
       onLogs: (data) => {
-        onSuccess?.((data?.[0] as any)?.args);
+        const args = (data?.[0] as any)?.args;
+        onSuccess?.(args);
+        isFinished = true;
       },
       onError: (error) => {
         onError?.(error);
@@ -37,7 +41,13 @@ export const useWatchContractEvent = <TSuccessData = any>({
           title: error?.message,
           variant: 'destructive',
         });
+        isFinished = true;
       },
     });
+    return () => {
+      if(isFinished){
+        clearEventListener();
+      }
+    };
   }, [contract, eventName, onError, onSuccess, toast]);
 };

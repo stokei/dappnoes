@@ -27,6 +27,12 @@ contract DominoGame {
         uint256 currentPlayerIndex;
     }
 
+    struct GamePlayer {
+        uint index;
+        address playerAddress;
+        uint deckCount;
+    }
+
     struct GameResponse {
         uint256 id;
         string name;
@@ -36,17 +42,11 @@ contract DominoGame {
         uint256 entryFee;
         uint256 prizePool;
         uint256 maxPlayers;
-        address[] players;
-        address[] activePlayers;
+        GamePlayer[] players;
+        GamePlayer[] activePlayers;
         uint256[] gameDeck;
         uint256[] boardDeck;
         uint256[] playerDeck;
-    }
-
-    struct CurrentPlayer {
-        uint256 playerIndex;
-        uint256[] playerDeck;
-        GameStatus gameStatus;
     }
 
     uint256 public gameCounter;
@@ -73,10 +73,7 @@ contract DominoGame {
 
     function joinGame(uint256 gameId) public payable {
         Game storage game = games[gameId];
-        require(
-            game.status == GameStatus.PENDING,
-            "gameNotAcceptingPlayers"
-        );
+        require(game.status == GameStatus.PENDING, "gameNotAcceptingPlayers");
         require(msg.value == game.entryFee, "incorrectEntryFee");
         require(game.players.length < game.maxPlayers, "gameIsFull");
         for (uint256 i = 0; i < game.players.length; i++) {
@@ -103,22 +100,19 @@ contract DominoGame {
         newGame.status = GameStatus.PENDING;
         newGame.entryFee = entryFee;
 
-        emit GameCreated(gameCounter, msg.sender, entryFee);
-
-        gameCounter++;
+        emit GameCreated(newGame.id, msg.sender, entryFee);
 
         if (isPlayer) {
             joinGame(newGame.id);
         }
+
+        gameCounter++;
     }
 
     function startGame(uint256 gameId) external onlyOwner(gameId) {
         Game storage game = games[gameId];
         require(game.players.length >= 2, "notEnoughPlayers");
-        require(
-            game.status == GameStatus.PENDING,
-            "gameNotReadyToStart"
-        );
+        require(game.status == GameStatus.PENDING, "gameNotReadyToStart");
 
         game.gameDeck = generateDeck();
         shuffleDeck(game.gameDeck);
@@ -142,8 +136,8 @@ contract DominoGame {
         require(game.status == GameStatus.PLAYING, "gameIsNotActive");
 
         game.status = GameStatus.COMPLETED;
-        balances[winner] += game.prizePool;
         game.winner = winner;
+        balances[winner] += game.prizePool;
 
         emit GameCompleted(gameId, winner);
     }
@@ -307,9 +301,25 @@ contract DominoGame {
         return false;
     }
 
-    function getGame(
+    function mapGamePlayers(
+        Game storage game,
+        address[] memory players
+    ) internal view returns (GamePlayer[] memory) {
+        GamePlayer[] memory gamePlayers = new GamePlayer[](players.length);
+
+        for (uint i = 0; i < players.length; i++) {
+            gamePlayers[i] = GamePlayer({
+                index: i,
+                playerAddress: players[i],
+                deckCount: game.playerDeck[players[i]].length
+            });
+        }
+        return gamePlayers;
+    }
+
+    function mapGame(
         uint256 gameId
-    ) external view returns (GameResponse memory) {
+    ) internal view returns (GameResponse memory) {
         Game storage game = games[gameId];
 
         require(game.owner != address(0), "gameNotFound");
@@ -326,38 +336,25 @@ contract DominoGame {
                 entryFee: game.entryFee,
                 prizePool: game.prizePool,
                 maxPlayers: game.maxPlayers,
-                players: game.players,
-                activePlayers: game.activePlayers,
+                players: mapGamePlayers(game, game.players),
+                activePlayers: mapGamePlayers(game, game.activePlayers),
                 gameDeck: game.gameDeck,
                 boardDeck: game.boardDeck,
                 playerDeck: playerDeck
             });
     }
 
+    function getGame(
+        uint256 gameId
+    ) external view returns (GameResponse memory) {
+        return mapGame(gameId);
+    }
+
     function getAllGames() external view returns (GameResponse[] memory) {
         GameResponse[] memory gamesResponse = new GameResponse[](gameCounter);
-
         for (uint256 i = 0; i < gameCounter; i++) {
-            Game storage game = games[i];
-            uint256[] memory playerDeck = game.playerDeck[msg.sender];
-
-            gamesResponse[i] = GameResponse({
-                id: game.id,
-                name: game.name,
-                owner: game.owner,
-                winner: game.winner,
-                status: game.status,
-                entryFee: game.entryFee,
-                prizePool: game.prizePool,
-                maxPlayers: game.maxPlayers,
-                players: game.players,
-                activePlayers: game.activePlayers,
-                gameDeck: game.gameDeck,
-                boardDeck: game.boardDeck,
-                playerDeck: playerDeck
-            });
+            gamesResponse[i] = mapGame(games[i].id);
         }
-
         return gamesResponse;
     }
 }

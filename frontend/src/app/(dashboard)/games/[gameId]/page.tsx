@@ -1,6 +1,7 @@
 'use client';
 
 import { GlobalLoading } from '@/components/global-loading';
+import { PrivateRoute } from '@/components/private-route';
 import { Container } from '@/components/ui/container';
 import { Stack } from '@/components/ui/stack';
 import { Title } from '@/components/ui/title';
@@ -27,35 +28,42 @@ export default function Page() {
   } = useGame();
 
   return (
-    <div className="w-full min-h-screen py-5 relative">
-      {isLoading ? (
-        <GlobalLoading />
-      ) : (
-        <Container>
-          {game ? (
-            <Stack width="full" direction="column">
-              <Scoreboard
-                game={game}
-                gameDeck={gameDeck}
-                onZoomIn={onZoomIn}
-                onZoomOut={onZoomOut}
-              />
-              <Board
-                scale={scale}
-                boardDeck={boardDeck}
-                onDrop={onDrop}
-                onDragOver={onDragOver}
-              />
-              <CurrentPlayer
-                playerDeck={playerDeck}
-                onDragStart={onDragStart}
-              />
-            </Stack>
-          ) : (
-            <Title>{gameErrorMessage}</Title>
-          )}
-        </Container>
-      )}
-    </div>
+    <PrivateRoute
+      isLoading={isLoading}
+      whenIsConnectedAndAllowedThisRule={game?.isActivePlayer}
+    >
+      <div className="w-full min-h-screen py-5 relative">
+        {isLoading ? (
+          <GlobalLoading />
+        ) : (
+          <Container>
+            {game ? (
+              <Stack width="full" direction="column">
+                <Scoreboard
+                  game={game}
+                  gameDeck={gameDeck}
+                  onZoomIn={onZoomIn}
+                  onZoomOut={onZoomOut}
+                />
+                <Board
+                  scale={scale}
+                  boardDeck={boardDeck}
+                  onDrop={onDrop}
+                  onDragOver={onDragOver}
+                />
+                {!game?.isFinished && (
+                  <CurrentPlayer
+                    playerDeck={playerDeck}
+                    onDragStart={onDragStart}
+                  />
+                )}
+              </Stack>
+            ) : (
+              <Title>{gameErrorMessage}</Title>
+            )}
+          </Container>
+        )}
+      </div>
+    </PrivateRoute>
   );
 }

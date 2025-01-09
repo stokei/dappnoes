@@ -1,4 +1,4 @@
-import { Game, GameMapped, GamePiece } from '@/types/game';
+import { Game, GameMapped, GamePiece, GameStatus } from '@/types/game';
 
 const bigIntToNumber = (value: bigint) => Number(value);
 
@@ -9,9 +9,12 @@ const mapGamePieces = (deck: bigint[]) => deck?.map<GamePiece>((piece, position)
 }));
 
 export const mapGameToGameMapped = (game: Game, currentUserAddress: string): GameMapped => {
-  const isActivePlayer = game?.activePlayers?.some(player => player === currentUserAddress);
+  const isActivePlayer = game?.activePlayers?.some(player => player.playerAddress === currentUserAddress);
+  const finishedStatus = [GameStatus.CANCELED, GameStatus.COMPLETED];
+  const isFinished = finishedStatus.includes(game.status);
   return {
     ...game,
+    isFinished,
     isActivePlayer,
     isOwner: game?.owner === currentUserAddress,
     id: bigIntToNumber(game.id),

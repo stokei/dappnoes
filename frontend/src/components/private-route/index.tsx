@@ -9,9 +9,16 @@ import { getLastPathnameAuthenticated, setLastPathnameAuthenticated } from '@/ut
 
 import { GlobalLoading } from '../global-loading';
 
-export const PrivateRoute = ({ children }: PropsWithChildren) => {
-  const { isConnected, isLoading } = useUser();
+interface PrivateRouteProps {
+  isLoading?: boolean;
+  whenIsConnectedAndAllowedThisRule?: boolean;
+}
+
+export const PrivateRoute = ({ isLoading: isLoadingProp, children, whenIsConnectedAndAllowedThisRule }: PropsWithChildren<PrivateRouteProps>) => {
+  const { isConnected, isLoading: isLoadingUser } = useUser();
   const { push, pathname } = useNavigate();
+
+  const isLoading = isLoadingUser || isLoadingProp;
 
   useEffect(() => {
     const checkAuth = () => {
@@ -21,10 +28,13 @@ export const PrivateRoute = ({ children }: PropsWithChildren) => {
       if (!isConnected) {
         return push(routes.auth.login({ redirectTo: getLastPathnameAuthenticated() }));
       }
+      if(whenIsConnectedAndAllowedThisRule !== undefined && !whenIsConnectedAndAllowedThisRule){
+        return push(routes.home);
+      }
       setLastPathnameAuthenticated(pathname);
     };
     checkAuth();
-  }, [isConnected, isLoading, pathname, push]);
+  }, [isConnected, isLoading, pathname, push, whenIsConnectedAndAllowedThisRule]);
 
   if(isLoading){
     return (

@@ -1,5 +1,6 @@
 export const ptBRMessages = {
   id: 'ID',
+  you: 'Você',
   required: 'Obrigatório',
   name: 'Nome',
   home: 'Início',
@@ -63,4 +64,6 @@ export const ptBRMessages = {
   gameNotFound: 'Jogo não encontrado',
   full: 'Lotado',
   buyTicket: 'Comprar ingresso',
+  prizePool: 'Permiação',
+  withdrawPrizePool: 'Receber permiação',
 };

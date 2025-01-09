@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useWriteContract } from 'wagmi';
 
 import { contractData } from '@/constants/contract-data';
@@ -11,7 +11,7 @@ import { useTranslations } from '../use-translations';
 import { useUser } from '../use-user';
 import { useWatchContractEvent } from '../use-watch-event';
 
-interface UseContractMutation<TSuccessData = any> {
+export interface UseContractMutation<TSuccessData = any> {
   functionName: string;
   successEvent?: string;
   onSuccess?: (data?: TSuccessData) => void
@@ -22,21 +22,11 @@ export const useContractMutation = <TSuccessData = any>({
   onSuccess
 }: UseContractMutation<TSuccessData>) => {
   const [isLoading, setIsLoading] = useState(false);
+  const isSubmitted = useRef(false);
   const { formatMessage } = useTranslations();
   const { accountAddress } = useUser();
   const { contract } = useContract();
   const { toast } = useToast();
-
-  useWatchContractEvent({
-    eventName: successEvent,
-    onSuccess: (data) => {
-      onSuccess?.(data);
-      setIsLoading(false);
-    },
-    onError: () => {
-      setIsLoading(false);
-    },
-  });
 
   const { writeContractAsync } = useWriteContract({
     mutation: {
@@ -55,11 +45,25 @@ export const useContractMutation = <TSuccessData = any>({
     },
   });
 
+  useWatchContractEvent({
+    eventName: successEvent,
+    onSuccess: (data) => {
+      if(isSubmitted.current){
+        onSuccess?.(data);
+      }
+      setIsLoading(false);
+    },
+    onError: () => {
+      setIsLoading(false);
+    },
+  });
+
   const onSubmit = async (args: any[], value?: any) => {
     if(!contract){
       return;
     }
     setIsLoading(true);
+    isSubmitted.current = true;
     await writeContractAsync({
       account: accountAddress as `0x${string}`,
       address: contract,

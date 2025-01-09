@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { GameMapped } from '@/types/game';
 
 import { Piece, PieceProps } from './piece';
@@ -14,21 +14,17 @@ export const CurrentPlayer = ({
 }: CurrentPlayerProps) => {
   return (
     <div  className="inset-x-2 p-4 fixed bottom-4 left-1/2 transform -translate-x-1/2">
-      <Card>
-        <CardHeader>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-2">
-            {playerDeck.map((piece) => (
-              <Piece
-                key={piece.position}
-                piece={piece}
-                isDraggable={true}
-                onDragStart={onDragStart}
-              />
-            ))}
-          </div>
-        </CardContent>
+      <Card className="p-4">
+        <div className="flex gap-2">
+          {playerDeck.map((piece) => (
+            <Piece
+              key={piece.position}
+              piece={piece}
+              isDraggable={true}
+              onDragStart={onDragStart}
+            />
+          ))}
+        </div>
       </Card>
     </div>
   );

@@ -32,6 +32,7 @@ export const useContractQuery = <TData = any>({
     address: contract,
     abi: contractData.abi,
     functionName,
+    account: accountAddress as any,
     args: args?.length ? args : [],
   });
 

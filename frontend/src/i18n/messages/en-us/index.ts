@@ -2,6 +2,7 @@ import { LanguageMessages } from '@/types/messages';
 
 export const enUSMessages: LanguageMessages = {
   id: 'ID',
+  you: 'You',
   required: 'Required',
   name: 'Name',
   home: 'Home',
@@ -65,4 +66,6 @@ export const enUSMessages: LanguageMessages = {
   gameNotFound: 'Game not found',
   full: 'Full',
   buyTicket: 'Buy ticket',
+  prizePool: 'Prize pool',
+  withdrawPrizePool: 'Withdraw prize pool',
 };

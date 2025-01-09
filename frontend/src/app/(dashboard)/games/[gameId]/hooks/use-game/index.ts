@@ -12,7 +12,6 @@ export const useGame = () => {
 
   useEffect(() => {
     const loadDecks = () => {
-      console.log({a:game?.playerDeck});
       setGameDeck(game?.gameDeck || []);
       setBoardDeck(game?.boardDeck || []);
       setPlayerDeck(game?.playerDeck || []);

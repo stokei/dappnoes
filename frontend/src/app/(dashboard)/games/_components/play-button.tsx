@@ -16,6 +16,9 @@ export const PlayButton = ({ game }: PlayButtonProps) => {
   const { isLoading: isLoadingJoinGame, onJoinGame } = useJoinGame({ game });
   const isFull = game?.activePlayers?.length === game?.maxPlayers;
 
+  if(game?.isFinished){
+    return null;
+  }
   if(isFull){
     return (
       <Button disabled>

@@ -12,9 +12,7 @@ export const useCreateGame = () => {
     functionName: 'createGame',
     successEvent: 'GameCreated',
     onSuccess: (data) => {
-      if(data){
-        return push(routes.dashboard.game({ game: Number(data?.gameId)?.toString() }).home);
-      }
+      return push(routes.dashboard.game({ game: Number(data?.gameId)?.toString() }).home);
     },
   });
 

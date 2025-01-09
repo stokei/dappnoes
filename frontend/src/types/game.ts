@@ -6,6 +6,11 @@ export enum GameStatus {
   DRAW
 }
 
+export interface GamePlayer {
+  index: bigint;
+  playerAddress: string;
+  deckCount: bigint;
+}
 export interface Game {
   id: bigint;
   name: string;
@@ -15,8 +20,8 @@ export interface Game {
   entryFee: bigint;
   maxPlayers: number;
   prizePool: bigint;
-  players: string[];
-  activePlayers: string[];
+  players: GamePlayer[];
+  activePlayers: GamePlayer[];
   gameDeck: bigint[];
   boardDeck: bigint[];
   playerDeck: bigint[];
@@ -37,9 +42,10 @@ export interface GameMapped {
   maxPlayers: number;
   isOwner: boolean;
   isActivePlayer: boolean;
+  isFinished: boolean;
   prizePool: bigint;
-  players: string[];
-  activePlayers: string[];
+  players: GamePlayer[];
+  activePlayers: GamePlayer[];
   gameDeck: GamePiece[];
   boardDeck: GamePiece[];
   playerDeck: GamePiece[];
